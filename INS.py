@@ -1,5 +1,5 @@
 import RAM
-import ROM
+import CONSOLE
 import time
 import threading
 
@@ -50,7 +50,7 @@ def INFLOOP():
     global BOR
     global LRD
     global INSR
-    INSR = ROM.Read(LRD)
+    INSR = CONSOLE.Read(LRD)
     INSS = INSR.split(' ')
     OPCODE = INSS[0]
 
@@ -89,6 +89,16 @@ def INFLOOP():
                         RAD = ACC
                     elif INSS[2].find('RB') == 0:
                         RBD = ACC
+            elif INSS[1].find('BOR') == 0:
+                if INSS[2][0] == '!':
+                    RAM.Write(INSS[2].replace('!', ''), BOR)
+                else:
+                    if INSS[2].find('RA') == 0:
+                        RAD = BOR
+                    elif INSS[2].find('RB') == 0:
+                        RBD = BOR
+                    elif INSS[2].find('ACC') == 0:
+                        RBD = BOR
             else:
                 if INSS[2].find('RA') == 0:
                     RAD = INSS[1]

@@ -1,2 +1,2 @@
 import INS
-INS.Start(1)
+INS.Start(float(input('Speed> ')))
