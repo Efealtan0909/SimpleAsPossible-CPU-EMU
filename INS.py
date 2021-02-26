@@ -1,5 +1,6 @@
 import RAM
 import CONSOLE
+import GPU
 import time
 import threading
 
@@ -27,21 +28,32 @@ LRD  = "0"      # Line        Register (INS)
 INSR = ""       # Instruction Register (INS)  
 
 # VARS
-LOOP = False
+LOOP  = False
+Debug = False
 
 # FUNCTIONS
-def Start(Speed):
+def toBTF(Str):
+    if Str == 'T':
+        return True
+    else:
+        return False
+
+def Start(Speed, DI):
     global LOOP
+    global Debug
     LOOP = True
     CLKS = Speed
+    Debug = DI
     while LOOP:
         OUTPUT = INFLOOP()
         if not OUTPUT:
             break
+        GPU.Draw()
         time.sleep(CLKS)
 
 def INFLOOP():
     global LOOP
+    global Debug
     # DEFINITONS
     OPERATION = "NONE"
     global RAD
@@ -249,34 +261,40 @@ def INFLOOP():
                 BOR = '1'
         
     
+    elif OPCODE.find('DRAW') == 0:
+        OPERATION = "DRAW"
+        GPU.Screen[int(INSS[1])-1] = toBTF(INSS[2])
+    
     elif OPCODE.find('END') == 0 or OPCODE.find('HALT') == 0:
         OPERATION = "END"
         LOOP = False
     
-    print('__________________')
-    print('\nREGISTER INFO\n')
-    print('RAD      | '+RAD)
-    print('RBD      | '+RBD)
-    print('ACC      | '+ACC)
-    print('BOR      | '+BOR)
-    print('LRD      | '+LRD)
-    print('INSR     | '+INSR)
-    print('\nOPERATION INFO\n')
-    print('OP       | '+INSR)
-    print('OPCODE   | '+OPCODE)
-    print('INS      | '+OPERATION)
-    print('\nRAM INFO\n')
-    COUNTERD = "0"
-    while int(COUNTERD) <= 15:
-        if int(COUNTERD) > 9:
-            print(COUNTERD+' : '+RAM.Read(COUNTERD))
-        else:
-            print(COUNTERD+'  : '+RAM.Read(COUNTERD))
-        COUNTERD = str(int(COUNTERD) + 1)
+    if Debug:
+        print('__________________')
+        print('\nREGISTER INFO\n')
+        print('RAD      | '+RAD)
+        print('RBD      | '+RBD)
+        print('ACC      | '+ACC)
+        print('BOR      | '+BOR)
+        print('LRD      | '+LRD)
+        print('INSR     | '+INSR)
+        print('\nOPERATION INFO\n')
+        print('OP       | '+INSR)
+        print('OPCODE   | '+OPCODE)
+        print('INS      | '+OPERATION)
+        print('\nRAM INFO\n')
+        COUNTERD = "0"
+        while int(COUNTERD) <= 15:
+            if int(COUNTERD) > 9:
+                print(COUNTERD+' : '+RAM.Read(COUNTERD))
+            else:
+                print(COUNTERD+'  : '+RAM.Read(COUNTERD))
+            COUNTERD = str(int(COUNTERD) + 1)
 
-    if not LOOP:
-        print('\n')
-    else:
+        if not LOOP:
+            print('\n')
+    
+    if LOOP:
         if OPERATION != "JMP" and OPERATION != "JE" and OPERATION != "JNE" and OPERATION != "JGT" and OPERATION != "JLT":
             LRD = str(int(LRD) + 1)
 
