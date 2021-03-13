@@ -1,37 +1,28 @@
-DATA = {
- "0":  "MOV 1 !5",
- "1":  "JSR 3",
- "2":  "END",
- "3":  "JSR 5",
- "4":  "RSR",
- "5":  "JSR 7",
- "6":  "RSR",
- "7":  "JSR 9",
- "8":  "RSR",
- "9":  "JSR 11",
- "10": "RSR",
- "11": "MOV 2 !5",
- "12": "RSR",
- "13": "",
- "14": "",
- "15": "",
- "16": "",
- "17": "",
- "18": "",
- "19": "",
- "20": "",
- "21": "",
- "22": "",
- "23": "",
- "24": "",
- "25": "",
- "26": "",
- "27": "",
- "28": "",
- "29": "",
- "30": "",
- "31": ""
-}
+USELAST = input('Use Last Program (Y/N) [DEFAULT: N]> ')
+
+if USELAST.lower() == 'y':
+    with open('lastprogram', 'r') as f:
+        FILE = f.read().replace('\n', '')
+else:
+    FILE = input('Enter Program Name> ')
+
+DATA = []
+
+if FILE.find('.SAPP') != -1:
+    with open('lastprogram', 'w') as f:
+        f.write(FILE)
+    with open(FILE, 'r') as f:
+        DATA = f.read().split('\n')
+else:
+    with open('lastprogram', 'w') as f:
+        f.write(FILE+'.SAPP')
+    with open(FILE+'.SAPP', 'r') as f:
+        DATA = f.read().split('\n')
 
 def Read(A):
-    return DATA[A]
+    try:
+        if (len(DATA)-1) == int(A):
+            raise IndexError()
+        return DATA[int(A)]
+    except IndexError:
+        return 'END'
